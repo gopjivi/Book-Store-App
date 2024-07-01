@@ -4,7 +4,7 @@ const router = express.Router();
 
 // GET all genres
 router.get("/", (req, res) => {
-  res.send("hi");
+  res.send("hi genres");
 });
 
 module.exports = router;

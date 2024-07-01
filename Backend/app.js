@@ -2,10 +2,16 @@ const express = require("express");
 const sequelize = require("./db");
 const genresModel = require("./models/genres");
 const bookModel = require("./models/book");
+const languageModel = require("./models/language");
+const authorModel = require("./models/author");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
+
+bookModel.belongsTo(authorModel, { foreignKey: "author_id" });
+bookModel.belongsTo(languageModel, { foreignKey: "language_id" });
+bookModel.belongsTo(genresModel, { foreignKey: "genre_id" });
 
 // Test the connection
 sequelize
@@ -29,8 +35,13 @@ sequelize
 // Import routes
 const genresRoutes = require("./routes/genres");
 const bookRoutes = require("./routes/book");
+const authorRoutes = require("./routes/author");
+const languageRoutes = require("./routes/language");
+
 app.use("/genres", genresRoutes);
 app.use("/books", bookRoutes);
+app.use("/author", authorRoutes);
+app.use("/language", languageRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Express-Sequelize demo!");

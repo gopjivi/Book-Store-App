@@ -21,6 +21,24 @@ const Book = sequelize.define("Book", {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
+  stock_quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
+  image_URL: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  location: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  edition: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Book;
