@@ -1,10 +1,15 @@
 const express = require("express");
 const router = express.Router();
-//const genresController = require("../controllers/genresController");
+const authorController = require("../controllers/authorController");
 
 // GET all authors
-router.get("/", (req, res) => {
-  res.send("hi author");
-});
+router.get("/", authorController.getAllAuthors);
+
+//create authors
+router.post("/", authorController.createAuthor);
+
+router.get("/:id", authorController.getAuthorById);
+router.put("/:id", authorController.updateAuthor);
+router.delete("/:id", authorController.deleteAuthor);
 
 module.exports = router;

@@ -9,9 +9,24 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
-bookModel.belongsTo(authorModel, { foreignKey: "author_id" });
-bookModel.belongsTo(languageModel, { foreignKey: "language_id" });
-bookModel.belongsTo(genresModel, { foreignKey: "genre_id" });
+//Model Association
+bookModel.belongsTo(authorModel, {
+  foreignKey: "author_id",
+  allowNull: false,
+  onDelete: "CASCADE",
+});
+bookModel.belongsTo(genresModel, { foreignKey: "genre_id", allowNull: false });
+bookModel.belongsTo(languageModel, {
+  foreignKey: "language_id",
+  allowNull: false,
+});
+
+authorModel.hasMany(bookModel, {
+  foreignKey: "author_id",
+  onDelete: "CASCADE",
+});
+genresModel.hasMany(bookModel, { foreignKey: "genre_id" });
+languageModel.hasMany(bookModel, { foreignKey: "language_id" });
 
 // Test the connection
 sequelize
@@ -23,6 +38,7 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
+//database syncronize
 sequelize
   .sync()
   .then(() => {
@@ -40,8 +56,8 @@ const languageRoutes = require("./routes/language");
 
 app.use("/genres", genresRoutes);
 app.use("/books", bookRoutes);
-app.use("/author", authorRoutes);
-app.use("/language", languageRoutes);
+app.use("/authors", authorRoutes);
+app.use("/languages", languageRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Express-Sequelize demo!");

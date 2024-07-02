@@ -39,6 +39,22 @@ const Book = sequelize.define("Book", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  author_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "Authors",
+      key: "author_id",
+    },
+  },
+  language_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "Languages",
+      key: "language_id",
+    },
+  },
 });
 
 module.exports = Book;

@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router();
-//const genresController = require("../controllers/genresController");
+const languageController = require("../controllers/languageController");
 
 // GET all language
-router.get("/", (req, res) => {
-  res.send("hi language");
-});
+router.get("/", languageController.getAllLanguages);
 
 module.exports = router;
