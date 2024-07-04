@@ -1,11 +1,12 @@
 const Author = require("../models/author");
 
 console.log(Author);
-
+console.log("hi from controller");
 // Create a new Author
 exports.createAuthor = async (req, res) => {
   try {
     const author = await Author.create(req.body);
+    console.log("author", author);
     res.status(201).json(author);
   } catch (err) {
     res.status(500).json({ error: err.message });

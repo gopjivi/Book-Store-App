@@ -1,5 +1,3 @@
-/*header section*/
-
 body {
   font-family: "Montserrat", sans-serif;
   color: #0c0c0c;
@@ -241,4 +239,45 @@ a:focus {
 .footer p {
   margin: 0;
   color: black;
+}
+
+/* Form Design*/
+
+.centerdiv {
+  width: 500px;
+  background-color: #f8f9fa;
+  margin-top: 60px;
+}
+
+.divheader {
+  background-color: #daa556;
+  height: 45px;
+  text-align: center;
+}
+
+.divmarginbottom {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.lableclass {
+  padding-left: 15px;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+}
+.btnorange {
+  background-color: #daa556;
+}
+
+.formpadding {
+  padding-top: 5px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.required {
+  color: red;
 }

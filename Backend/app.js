@@ -5,10 +5,17 @@ const bookModel = require("./models/book");
 const languageModel = require("./models/language");
 const authorModel = require("./models/author");
 const app = express();
+const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
+// Use CORS middleware
+app.use(
+  cors({
+    origin: "http://localhost:3002",
+  })
+);
 //Model Association
 bookModel.belongsTo(authorModel, {
   foreignKey: "author_id",

@@ -1,3 +1,8 @@
+import BookTable from "./booktable";
 export default function Book() {
-  return <div>Book Page </div>;
+  return (
+    <div>
+      <BookTable></BookTable>
+    </div>
+  );
 }

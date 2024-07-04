@@ -13,6 +13,11 @@ const author = sequelize.define("Author", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  display_name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
   biography: {
     type: DataTypes.STRING,
     allowNull: false,

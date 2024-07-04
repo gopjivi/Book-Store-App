@@ -3,12 +3,5 @@ import Footer from "./footer";
 import React from "react";
 
 export default function Home() {
-  return (
-    <React.Fragment>
-      <div className="hero_area">
-        <Header></Header>
-      </div>
-      <Footer></Footer>
-    </React.Fragment>
-  );
+  return <React.Fragment>home page</React.Fragment>;
 }

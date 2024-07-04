@@ -2,6 +2,8 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import logo from "../images/logo.png";
+import { NavLink } from "reactstrap";
+import { NavLink as ReactLink } from "react-router-dom";
 
 function Header() {
   return (
@@ -16,10 +18,18 @@ function Header() {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="navbar-nav-center ml-auto">
-                <Nav.Link href="#home">Home</Nav.Link>
-                <Nav.Link href="#book">Books</Nav.Link>
-                <Nav.Link href="#author">Authors</Nav.Link>
-                <Nav.Link href="#genres">Genres</Nav.Link>
+                <NavLink tag={ReactLink} to="/" activeClassName="active">
+                  Home
+                </NavLink>
+                <NavLink tag={ReactLink} to="/book" activeClassName="active">
+                  Books
+                </NavLink>
+                <NavLink tag={ReactLink} to="/author" activeClassName="active">
+                  Authors
+                </NavLink>
+                <NavLink tag={ReactLink} to="/genre" activeClassName="active">
+                  Genres
+                </NavLink>
               </Nav>
             </Navbar.Collapse>
           </Container>
