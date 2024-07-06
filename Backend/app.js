@@ -13,7 +13,7 @@ app.use(express.json());
 // Use CORS middleware
 app.use(
   cors({
-    origin: "http://localhost:3002",
+    origin: "http://localhost:3000",
   })
 );
 //Model Association

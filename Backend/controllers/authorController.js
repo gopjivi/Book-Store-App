@@ -1,7 +1,9 @@
 const Author = require("../models/author");
+const { Op } = require("sequelize");
 
 console.log(Author);
 console.log("hi from controller");
+
 // Create a new Author
 exports.createAuthor = async (req, res) => {
   try {
@@ -16,7 +18,9 @@ exports.createAuthor = async (req, res) => {
 // Get all Author
 exports.getAllAuthors = async (req, res) => {
   try {
-    const authors = await Author.findAll();
+    const authors = await Author.findAll({
+      order: [["author_id", "DESC"]],
+    });
     res.json(authors);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -33,6 +37,36 @@ exports.getAuthorById = async (req, res) => {
     } else {
       res.status(404).json({ error: "Author not found" });
     }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+//check author dispaly name on create
+exports.checkAuthorNameExists = async (req, res) => {
+  try {
+    const author = await Author.findAll({
+      where: { display_name: req.params.name },
+    });
+    console.log(author);
+    const exists = author.length > 0;
+    res.status(200).json({ isExists: exists });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+//check author dispaly name on update
+exports.checkAuthorNameExistsForEdit = async (req, res) => {
+  try {
+    const author = await Author.findAll({
+      where: {
+        display_name: req.params.name,
+        author_id: { [Op.ne]: req.params.id },
+      },
+    });
+    console.log(author);
+    const exists = author.length > 0;
+    res.status(200).json({ isExists: exists });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

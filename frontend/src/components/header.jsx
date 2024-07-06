@@ -18,16 +18,16 @@ function Header() {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="navbar-nav-center ml-auto">
-                <NavLink tag={ReactLink} to="/" activeClassName="active">
+                <NavLink tag={ReactLink} to="/" activeclassname="active">
                   Home
                 </NavLink>
-                <NavLink tag={ReactLink} to="/book" activeClassName="active">
+                <NavLink tag={ReactLink} to="/book" activeclassname="active">
                   Books
                 </NavLink>
-                <NavLink tag={ReactLink} to="/author" activeClassName="active">
+                <NavLink tag={ReactLink} to="/author" activeclassname="active">
                   Authors
                 </NavLink>
-                <NavLink tag={ReactLink} to="/genre" activeClassName="active">
+                <NavLink tag={ReactLink} to="/genre" activeclassname="active">
                   Genres
                 </NavLink>
               </Nav>

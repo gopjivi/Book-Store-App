@@ -269,7 +269,24 @@ a:focus {
   justify-content: center; /* Centers horizontally */
   align-items: center; /* Centers vertically */
 }
+/* button*/
 .btnorange {
+  background-color: #daa556;
+  border: 0;
+  font-weight: bold;
+  color: black;
+}
+.btnorange:hover {
+  border: 1px solid #daa556;
+  background-color: #daa556;
+  color: black;
+  transition: initial;
+}
+
+.custom-orange {
+  background-color: #daa556;
+}
+.custom-orange .active {
   background-color: #daa556;
 }
 
@@ -280,4 +297,25 @@ a:focus {
 }
 .required {
   color: red;
+}
+
+/*table*/
+
+.table-striped > tbody > tr:nth-of-type(even) > * {
+  /* background-color: #f1dcbf; */
+  background-color: #f6ead4;
+}
+.custom-pagination .page-item.active .page-link {
+  background-color: #daa556;
+  border-color: #daa556;
+  color: black;
+}
+.custom-pagination .page-item .page-link {
+  color: black;
+}
+
+.custom-alert {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
 }

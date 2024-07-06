@@ -2,36 +2,62 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import { createNewAuthor } from "../services/authorService";
+import { createNewData } from "../services/service";
+import { checkAuthorName } from "../services/authorservice";
+import CustomAlert from "./customalert";
 
-export default function NewAuthor() {
+export default function NewAuthor({ show, handleClose, errors, setErrors }) {
   const [author, setAuthor] = useState({
     name: "",
     display_name: "",
     biography: "",
   });
-  const [errors, setErrors] = useState({});
-  const [show, setShow] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const authorsApiUrl = "http://localhost:3001/authors";
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  async function validateAuthor() {
+    const errors = {};
+    console.log("hi");
+    if (!author.name) {
+      errors.name = "Name is Required";
+    }
+    if (!author.display_name) {
+      errors.display_name = "Display Name is Required";
+    } else {
+      const response = await checkAuthorName(author.display_name.trim());
+      console.log(response);
+      console.log("authorname available", response.isExists);
+      if (response.isExists) {
+        errors.display_name = "Author Display Name already exists";
+      }
+    }
+
+    return errors;
+  }
+
+  function handleCloseAlert() {
+    setShowAlert(false);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const result = await createNewAuthor(author);
-    if (result) {
-      alert("author created successfully");
+    const validationErrors = await validateAuthor();
+    console.log(validationErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
     } else {
-      console.log(result);
+      try {
+        setErrors({});
+        const newAuthor = await createNewData(authorsApiUrl, author);
+        setShowAlert(true);
+        handleClose();
+      } catch (error) {
+        console.error("Failed to create author:", error);
+      }
     }
-    console.log(result);
   }
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        Add New Author
-      </Button>
-
       <Offcanvas
         show={show}
         onHide={handleClose}
@@ -50,7 +76,11 @@ export default function NewAuthor() {
               <Form.Control
                 type="text"
                 onChange={(e) => setAuthor({ ...author, name: e.target.value })}
+                isInvalid={!!errors.name}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.name}
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicDisplayName">
               <Form.Label>
@@ -61,7 +91,11 @@ export default function NewAuthor() {
                 onChange={(e) =>
                   setAuthor({ ...author, display_name: e.target.value })
                 }
+                isInvalid={!!errors.display_name}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.display_name}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicBiography">
@@ -76,7 +110,7 @@ export default function NewAuthor() {
             </Form.Group>
 
             <Button
-              variant="primary btnorange"
+              variant="custom-orange btnorange"
               type="submit"
               onClick={handleSubmit}
             >
@@ -85,6 +119,12 @@ export default function NewAuthor() {
           </Form>
         </Offcanvas.Body>
       </Offcanvas>
+      <CustomAlert
+        showAlert={showAlert}
+        handleCloseAlert={handleCloseAlert}
+        name={"Author"}
+        action={"Created"}
+      />
     </>
   );
 }
