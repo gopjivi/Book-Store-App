@@ -1,6 +1,7 @@
 import NewAuthor from "./newauthor";
 import Button from "react-bootstrap/Button";
 import { Table, Pagination } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
 import { useState, useEffect } from "react";
 import { useFetch } from "../services/useFetch";
 import EditAuthor from "./editauthor";
@@ -15,6 +16,7 @@ export default function Author() {
   const [showAddAuthor, setShowAddAuthor] = useState(false);
   const [showEditAuthor, setShowEditAuthor] = useState(false);
   const [showDeleteAuthor, setShowDeleteAuthor] = useState(false);
+  const [loading, setLoading] = useState(true); // Loading state
   const [errors, setErrors] = useState({});
   const authorsApiUrl = "http://localhost:3001/authors";
   const [authorsData] = useFetch(authorsApiUrl);
@@ -23,6 +25,7 @@ export default function Author() {
   useEffect(() => {
     if (authorsData) {
       setAuthors(authorsData);
+      setLoading(false);
     }
   }, [authorsData]);
 
@@ -48,7 +51,10 @@ export default function Author() {
 
   function refetchAuthors() {
     getAllData(authorsApiUrl)
-      .then((data) => setAuthors(data))
+      .then((data) => {
+        setAuthors(data);
+        setLoading(false); // Set loading to false once data is fetched
+      })
       .catch((error) => console.error("Error fetching authors:", error));
   }
   useEffect(() => {
@@ -112,100 +118,121 @@ export default function Author() {
         <div className="row">
           <div className="col-1"></div>
           <div className="col-10">
-            <Table
-              striped
-              bordered
-              responsive="true"
-              hover
-              className="shadow table-striped"
-            >
-              <thead>
-                <tr className="table-header">
-                  <th style={{ backgroundColor: "#daa556" }}>Author Name</th>
-                  <th style={{ backgroundColor: "#daa556" }}>Display Name</th>
-                  <th style={{ backgroundColor: "#daa556" }}> Biography</th>
-                  <th style={{ backgroundColor: "#daa556" }}> Edit</th>
-                  <th style={{ backgroundColor: "#daa556" }}> Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedData.length > 0 ? (
-                  paginatedData.map((author) => (
-                    <tr key={author.author_id}>
-                      <td>{author.name}</td>
-                      <td>{author.display_name}</td>
-                      <td>{author.biography}</td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btnorange"
-                          onClick={() => handelShowEditAuthor(author.author_id)}
-                        >
-                          <i className="bi bi-pen-fill"></i>
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btnorange"
-                          onClick={() =>
-                            handelShowDeleteAuthor(author.author_id)
-                          }
-                        >
-                          <i className="bi bi-trash-fill"></i>
-                        </button>
-                      </td>
+            {loading ? (
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ height: "50vh" }}
+              >
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            ) : (
+              <>
+                <Table
+                  striped
+                  bordered
+                  responsive="true"
+                  hover
+                  className="shadow table-striped"
+                >
+                  <thead>
+                    <tr className="table-header">
+                      <th style={{ backgroundColor: "#daa556" }}>
+                        Author Name
+                      </th>
+                      <th style={{ backgroundColor: "#daa556" }}>
+                        Display Name
+                      </th>
+                      <th style={{ backgroundColor: "#daa556" }}> Biography</th>
+                      <th style={{ backgroundColor: "#daa556" }}> Edit</th>
+                      <th style={{ backgroundColor: "#daa556" }}> Delete</th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7">
-                      <div
-                        id="noresult"
-                        className="text-center bg-light text-danger"
+                  </thead>
+                  <tbody>
+                    {paginatedData.length > 0 ? (
+                      paginatedData.map((author) => (
+                        <tr key={author.author_id}>
+                          <td>{author.name}</td>
+                          <td>{author.display_name}</td>
+                          <td>{author.biography}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btnorange"
+                              onClick={() =>
+                                handelShowEditAuthor(author.author_id)
+                              }
+                            >
+                              <i className="bi bi-pen-fill"></i>
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btnorange"
+                              onClick={() =>
+                                handelShowDeleteAuthor(author.author_id)
+                              }
+                            >
+                              <i className="bi bi-trash-fill"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7">
+                          <div
+                            id="noresult"
+                            className="text-center bg-light text-danger"
+                          >
+                            No Results Found !!!
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+                <div className="d-flex justify-content-between align-items-center">
+                  <span>
+                    Showing {startIndex + 1} to {endIndex} of {totalItems}{" "}
+                    results
+                  </span>
+                  <Pagination responsive="true" className="custom-pagination">
+                    <Pagination.First
+                      onClick={() => handlePageChange(1)}
+                      disabled={currentPage === 1}
+                    />
+                    <Pagination.Prev
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    />
+                    {Array.from({ length: totalPages }, (_, idx) => (
+                      <Pagination.Item
+                        key={idx + 1}
+                        active={idx + 1 === currentPage}
+                        onClick={() => handlePageChange(idx + 1)}
                       >
-                        No Results Found !!!
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-            <div className="d-flex justify-content-between align-items-center">
-              <span>
-                Showing {startIndex + 1} to {endIndex} of {totalItems} results
-              </span>
-              <Pagination responsive="true" className="custom-pagination">
-                <Pagination.First
-                  onClick={() => handlePageChange(1)}
-                  disabled={currentPage === 1}
-                />
-                <Pagination.Prev
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                />
-                {Array.from({ length: totalPages }, (_, idx) => (
-                  <Pagination.Item
-                    key={idx + 1}
-                    active={idx + 1 === currentPage}
-                    onClick={() => handlePageChange(idx + 1)}
-                  >
-                    {idx + 1}
-                  </Pagination.Item>
-                ))}
-                <Pagination.Next
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                />
-                <Pagination.Last
-                  onClick={() => handlePageChange(totalPages)}
-                  disabled={currentPage === totalPages}
-                />
-              </Pagination>
-            </div>
+                        {idx + 1}
+                      </Pagination.Item>
+                    ))}
+                    <Pagination.Next
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    />
+                    <Pagination.Last
+                      onClick={() => handlePageChange(totalPages)}
+                      disabled={currentPage === totalPages}
+                    />
+                  </Pagination>
+                </div>
+              </>
+            )}
           </div>
           <div className="col-1"></div>
         </div>
+
         <NewAuthor
           show={showAddAuthor}
           handleClose={handleCloseAddAuthor}
