@@ -2,25 +2,51 @@ import NewAuthor from "./newauthor";
 import Button from "react-bootstrap/Button";
 import { Table, Pagination } from "react-bootstrap";
 import Spinner from "react-bootstrap/Spinner";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { useFetch } from "../services/useFetch";
 import EditAuthor from "./editauthor";
 import { getDataById } from "../services/service";
 import { getAllData } from "../services/service";
 import DeleteAuthor from "./deleteauthor";
 
+const initialState = {
+  showAddAuthor: false,
+  showEditAuthor: false,
+  showDeleteAuthor: false,
+  errors: {},
+};
+function reducer(state, action) {
+  switch (action.type) {
+    case "SHOW_ADD_AUTHOR":
+      return { ...state, showAddAuthor: true, errors: {} };
+    case "HIDE_ADD_AUTHOR":
+      return { ...state, showAddAuthor: false, errors: {} };
+    case "SHOW_EDIT_AUTHOR":
+      return { ...state, showEditAuthor: true, errors: {} };
+    case "HIDE_EDIT_AUTHOR":
+      return { ...state, showEditAuthor: false, errors: {} };
+    case "SHOW_DELETE_AUTHOR":
+      return { ...state, showDeleteAuthor: true, errors: {} };
+    case "HIDE_DELETE_AUTHOR":
+      return { ...state, showDeleteAuthor: false, errors: {} };
+    case "SET_ERRORS":
+      return { ...state, errors: action.payload };
+    default:
+      return state;
+  }
+}
+
 export default function Author() {
   const [authors, setAuthors] = useState([]);
   const [author, setAuthor] = useState([]);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { showAddAuthor, showEditAuthor, showDeleteAuthor, errors } = state;
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [showAddAuthor, setShowAddAuthor] = useState(false);
-  const [showEditAuthor, setShowEditAuthor] = useState(false);
-  const [showDeleteAuthor, setShowDeleteAuthor] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
-  const [errors, setErrors] = useState({});
+
   const authorsApiUrl = "http://localhost:3001/authors";
   const [authorsData] = useFetch(authorsApiUrl);
-  const itemsPerPage = 5;
 
   useEffect(() => {
     if (authorsData) {
@@ -29,6 +55,7 @@ export default function Author() {
     }
   }, [authorsData]);
 
+  const itemsPerPage = 5;
   const totalItems = authors.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -36,12 +63,10 @@ export default function Author() {
   const paginatedData = authors.slice(startIndex, endIndex);
 
   function handleShowAddAuthor() {
-    setShowAddAuthor(true);
-    setErrors({});
+    dispatch({ type: "SHOW_ADD_AUTHOR" });
   }
   function handleCloseAddAuthor() {
-    setShowAddAuthor(false);
-    setErrors({});
+    dispatch({ type: "HIDE_ADD_AUTHOR" });
     refetchAuthors();
   }
 
@@ -57,47 +82,32 @@ export default function Author() {
       })
       .catch((error) => console.error("Error fetching authors:", error));
   }
-  useEffect(() => {
-    if (authors) {
-      console.log("authors", author);
-    }
-  }, [authors]);
 
   function handelShowEditAuthor(id) {
-    setShowEditAuthor(true);
+    dispatch({ type: "SHOW_EDIT_AUTHOR" });
     getDataById(authorsApiUrl, id)
       .then((data) => {
         setAuthor(data);
       })
       .catch((error) => console.error("Error fetching author:", error));
-    setErrors({});
   }
-
-  function handelShowDeleteAuthor(id) {
-    setShowDeleteAuthor(true);
-    getDataById(authorsApiUrl, id)
-      .then((data) => {
-        setAuthor(data);
-      })
-      .catch((error) => console.error("Error fetching author:", error));
-    setErrors({});
-  }
-
-  useEffect(() => {
-    if (author) {
-      console.log("author", author);
-    }
-  }, [author]);
 
   function handleCloseEditAuthor() {
-    setShowEditAuthor(false);
-    setErrors({});
+    dispatch({ type: "HIDE_EDIT_AUTHOR" });
     refetchAuthors();
   }
 
+  function handelShowDeleteAuthor(id) {
+    dispatch({ type: "SHOW_DELETE_AUTHOR" });
+    getDataById(authorsApiUrl, id)
+      .then((data) => {
+        setAuthor(data);
+      })
+      .catch((error) => console.error("Error fetching author:", error));
+  }
+
   function handleCloseDeleteAuthor() {
-    setShowDeleteAuthor(false);
-    setErrors({});
+    dispatch({ type: "HIDE_DELETE_AUTHOR" });
     refetchAuthors();
   }
 
@@ -237,7 +247,9 @@ export default function Author() {
           show={showAddAuthor}
           handleClose={handleCloseAddAuthor}
           errors={errors}
-          setErrors={setErrors}
+          setErrors={(errors) =>
+            dispatch({ type: "SET_ERRORS", payload: errors })
+          }
         />
       </div>
 
@@ -247,7 +259,9 @@ export default function Author() {
         errors={errors}
         author={author}
         setAuthor={setAuthor}
-        setErrors={setErrors}
+        setErrors={(errors) =>
+          dispatch({ type: "SET_ERRORS", payload: errors })
+        }
       />
       <DeleteAuthor
         show={showDeleteAuthor}

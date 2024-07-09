@@ -1,5 +1,5 @@
 const express = require("express");
-const sequelize = require("./db");
+const sequelize = require("./models");
 const genresModel = require("./models/genres");
 const bookModel = require("./models/book");
 const languageModel = require("./models/language");

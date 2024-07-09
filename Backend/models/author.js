@@ -1,6 +1,6 @@
 // models/author.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../db");
+const sequelize = require(".");
 
 const author = sequelize.define("Author", {
   author_id: {

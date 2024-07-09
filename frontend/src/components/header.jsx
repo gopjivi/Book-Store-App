@@ -1,7 +1,6 @@
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import logo from "../images/logo.png";
 import { NavLink } from "reactstrap";
 import { NavLink as ReactLink } from "react-router-dom";
 
@@ -12,7 +11,7 @@ function Header() {
         <Navbar expand="lg" className="custom_nav-container bg-body-tertiary">
           <Container>
             <Navbar.Brand href="#home">
-              <img width="100" src={logo} alt="Logo" />
+              <img width="100" src="/images/logo.png" alt="Logo" />
               <span className="store_name">NOVAL NOOK</span>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />

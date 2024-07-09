@@ -1,6 +1,6 @@
 // models/books.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../db");
+const sequelize = require(".");
 
 const Book = sequelize.define("Book", {
   book_id: {
@@ -21,6 +21,10 @@ const Book = sequelize.define("Book", {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
+  edition: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   stock_quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -31,13 +35,18 @@ const Book = sequelize.define("Book", {
     allowNull: true,
   },
 
-  location: {
+  storage_section: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  edition: {
+  storage_shelf: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  is_offer_available: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   },
   author_id: {
     type: DataTypes.INTEGER,
@@ -53,6 +62,14 @@ const Book = sequelize.define("Book", {
     references: {
       model: "Languages",
       key: "language_id",
+    },
+  },
+  genre_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "Genres",
+      key: "genre_id",
     },
   },
 });

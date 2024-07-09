@@ -1,6 +1,6 @@
 // models/languagejs
 const { DataTypes } = require("sequelize");
-const sequelize = require("../db");
+const sequelize = require(".");
 
 const language = sequelize.define("Language", {
   language_id: {
