@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `Languages` (
 );
 
 
-CREATE TABLE `Books` (
+CREATE TABLE IF NOT EXISTS `Books` (
   `book_id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `price` float NOT NULL,
@@ -60,4 +60,5 @@ CREATE TABLE `Books` (
   CONSTRAINT `books_ibfk_3` FOREIGN KEY (`genre_id`) REFERENCES `Genres` (`genre_id`) ON UPDATE CASCADE
 ) 
 
- 
+
+

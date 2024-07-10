@@ -1,5 +1,6 @@
 const Book = require("../models/book");
 const Author = require("../models/author");
+const Genre = require("../models/genres");
 const Language = require("../models/language");
 
 console.log(Book);
@@ -17,7 +18,9 @@ exports.createBook = async (req, res) => {
 exports.getAllBooks = async (req, res) => {
   try {
     // const books = (await Book.findAll());
+
     const books = await Book.findAll({
+      order: [["book_id", "DESC"]],
       include: [
         {
           model: Author,
@@ -38,7 +41,22 @@ exports.getAllBooks = async (req, res) => {
 // Get a Book by ID
 exports.getBookById = async (req, res) => {
   try {
-    const book = await Book.findByPk(req.params.id);
+    const book = await Book.findByPk(req.params.id, {
+      include: [
+        {
+          model: Author,
+          attributes: ["display_name"], // Specify the fields you want from the Author model
+        },
+        {
+          model: Language,
+          attributes: ["language_name"], // Specify the fields you want from the Language model
+        },
+        {
+          model: Genre,
+          attributes: ["genre_name"], // Specify the fields you want from the Author model
+        },
+      ],
+    });
     console.log(book);
     if (book) {
       res.json(book);

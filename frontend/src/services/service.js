@@ -18,7 +18,7 @@ export async function createNewData(url, data) {
     return await response.json();
   } catch (error) {
     // Handle network or other errors
-    console.error("Error creating new author:", error);
+    console.error("Error creating new data:", error);
     throw error; // Re-throw the error to be handled by the calling code
   }
 }

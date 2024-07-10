@@ -1,4 +1,4 @@
-import NewAuthor from "./newauthor";
+import NewAuthor from "./addauthor";
 import Button from "react-bootstrap/Button";
 import { Table, Pagination } from "react-bootstrap";
 import Spinner from "react-bootstrap/Spinner";

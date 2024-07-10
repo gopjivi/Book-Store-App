@@ -299,6 +299,18 @@ a:focus {
   color: red;
 }
 
+@media (min-width: 768px) {
+  .custom-offcanvas.offcanvas.offcanvas-end {
+    width: 50%;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .custom-offcanvas.offcanvas.offcanvas-end {
+    width: 100%;
+  }
+}
+
 /*table*/
 
 .table-striped > tbody > tr:nth-of-type(even) > * {
@@ -318,4 +330,7 @@ a:focus {
   background-color: #d4edda;
   color: #155724;
   border-color: #c3e6cb;
+}
+.view-book {
+  margin-bottom: 10px;
 }

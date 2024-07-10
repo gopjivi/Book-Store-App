@@ -18,7 +18,7 @@ export default function CustomAlert({
         <Modal.Header className="modal-header custom-alert" closeButton>
           <Modal.Title>
             {" "}
-            <i class="bi bi-check-lg"></i> Success Message
+            <i className="bi bi-check-lg"></i> Success Message
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="custom-alert">

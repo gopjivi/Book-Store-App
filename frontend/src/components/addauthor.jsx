@@ -50,6 +50,7 @@ export default function NewAuthor({ show, handleClose, errors, setErrors }) {
         setErrors({});
         const newAuthor = await createNewData(authorsApiUrl, author);
         setShowAlert(true);
+        setAuthor({});
         handleClose();
       } catch (error) {
         console.error("Failed to create author:", error);

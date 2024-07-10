@@ -1,27 +1,21 @@
 import Col from "react-bootstrap/Col";
 import { Form, InputGroup, Button } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import { useState, useEffect } from "react";
-import { createNewData } from "../services/service";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import { useFetch } from "../services/useFetch";
+import { useState, useEffect } from "react";
+import { updateData } from "../services/service";
 import CustomAlert from "./customalert";
 
-export default function AddBook({ show, handleClose, errors, setErrors }) {
-  const [book, setBook] = useState({
-    title: "",
-    price: "",
-    publication_date: "",
-    edition: "",
-    stock_quantity: "",
-    image_URL: "",
-    storage_section: "",
-    storage_shelf: "",
-    is_offer_available: "",
-    author_id: "",
-    language_id: "",
-    genre_id: "",
-  });
+export default function EditBook({
+  show,
+  handleClose,
+  book,
+  setBook,
+  errors,
+  setErrors,
+}) {
+  console.log(book);
   const [showAlert, setShowAlert] = useState(false);
   const [offerAvailable, setOfferAvailable] = useState(false);
   const [authors, setAuthors] = useState({});
@@ -68,6 +62,12 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
     setMaxDate(formattedDate);
   }, [authorsData, genresData, languageData]);
 
+  // useEffect(() => {
+  //   setBook(book);
+  //   setOfferAvailable(book.is_offer_available);
+  //   setErrors({});
+  // }, [book]);
+
   const handleRadioChange = (value) => {
     setOfferAvailable(value);
   };
@@ -106,6 +106,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
   function handleCloseAlert() {
     setShowAlert(false);
   }
+
   function handleLanguageChange(event) {
     const selectedLanguageId = event.target.value;
     setBook({ ...book, language_id: selectedLanguageId });
@@ -131,7 +132,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
   }
 
   function updateStorageSection(languageName, genreName) {
-    if (languageName && genreName) {
+    if (languageName || genreName) {
       const newStorageSection = `${languageName} - ${genreName}`;
       setBook((prevBook) => ({
         ...prevBook,
@@ -151,16 +152,18 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
       try {
         setErrors({});
         console.log(book);
-        const newBook = await createNewData(booksApiUrl, book);
+
+        const newBook = await updateData(booksApiUrl, book.book_id, book);
         setShowAlert(true);
         setBook({});
         handleClose();
+        console.log(newBook);
+        console.log("updated successfully:", newBook);
       } catch (error) {
-        console.error("Failed to create book:", error);
+        console.error("Failed to Update book:", error);
       }
     }
   }
-
   return (
     <>
       <Offcanvas
@@ -184,6 +187,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                   type="text"
                   onChange={(e) => setBook({ ...book, title: e.target.value })}
                   isInvalid={!!errors.title}
+                  value={book.title}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.title}
@@ -201,6 +205,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                     onChange={(e) =>
                       setBook({ ...book, price: e.target.value })
                     }
+                    value={book.price}
                     isInvalid={!!errors.price}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -223,7 +228,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                   isInvalid={!!errors.language_id}
                   value={book.language_id}
                 >
-                  <option>Choose...</option>
+                  <option value="">Choose...</option>
                   {languages.length > 0 &&
                     languages.map((language) => (
                       <option
@@ -248,8 +253,9 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                   // }
                   onChange={handleGenreChange}
                   isInvalid={!!errors.genre_id}
+                  value={book.genre_id}
                 >
-                  <option>Choose...</option>
+                  <option value="">Choose...</option>
                   {genres.length > 0 &&
                     genres.map((genre) => (
                       <option key={genre.genre_id} value={genre.genre_id}>
@@ -271,9 +277,10 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                   onChange={(e) =>
                     setBook({ ...book, author_id: e.target.value })
                   }
+                  value={book.author_id}
                   isInvalid={!!errors.author_id}
                 >
-                  <option>Choose...</option>
+                  <option value="">Choose...</option>
                   {authors.length > 0 &&
                     authors.map((author) => (
                       <option key={author.author_id} value={author.author_id}>
@@ -295,6 +302,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                   onChange={(e) =>
                     setBook({ ...book, publication_date: e.target.value })
                   }
+                  value={book.publication_date}
                   isInvalid={!!errors.publication_date}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -306,15 +314,16 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
               <Form.Group as={Col} controlId="formGridEdition">
                 <Form.Label>Edition:</Form.Label>
                 {/* <Form.Control
-                  type="text"
-                  onChange={(e) =>
-                    setBook({ ...book, edition: e.target.value })
-                  }
-                /> */}
+                      type="text"
+                      onChange={(e) =>
+                        setBook({ ...book, edition: e.target.value })
+                      }
+                    /> */}
                 <Form.Select
                   onChange={(e) =>
                     setBook({ ...book, edition: e.target.value })
                   }
+                  value={book.edition}
                 >
                   <option>Choose...</option>
                   {editions.map((edition, index) => (
@@ -334,6 +343,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                   onChange={(e) =>
                     setBook({ ...book, stock_quantity: e.target.value })
                   }
+                  value={book.stock_quantity}
                   isInvalid={!!errors.stock_quantity}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -366,6 +376,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                   onChange={(e) =>
                     setBook({ ...book, storage_shelf: e.target.value })
                   }
+                  value={book.storage_shelf}
                   isInvalid={!!errors.storage_shelf}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -401,22 +412,30 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
               <Form.Group as={Col} rowSpan="2"></Form.Group>
             </Row>
             {/* <Row className="mb-3">
-              <Form.Group as={Col} controlId="formFile">
-                <Form.Label>Upload Book Cover</Form.Label>
-                <Form.Control type="file" onChange={handleFileChange} />
-              </Form.Group>
-              <Form.Group as={Col} controlId="formFileimage">
-                {preview && (
-                  <img src={preview} alt="Preview" className="img-thumbnail" />
-                )}
-              </Form.Group>
-            </Row> */}
+                  <Form.Group as={Col} controlId="formFile">
+                    <Form.Label>Upload Book Cover</Form.Label>
+                    <Form.Control type="file" onChange={handleFileChange} />
+                  </Form.Group>
+                  <Form.Group as={Col} controlId="formFileimage">
+                    {preview && (
+                      <img src={preview} alt="Preview" className="img-thumbnail" />
+                    )}
+                  </Form.Group>
+                </Row> */}
             <Button
               variant="custom-orange btnorange"
               type="submit"
               onClick={handleSubmit}
+              style={{ marginRight: "10px" }}
             >
-              Submit
+              Update
+            </Button>
+            <Button
+              variant="custom-orange btnorange"
+              type="button"
+              onClick={handleClose}
+            >
+              Cancel
             </Button>
           </Form>
         </Offcanvas.Body>
@@ -425,7 +444,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
         showAlert={showAlert}
         handleCloseAlert={handleCloseAlert}
         name={"Book"}
-        action={"Created"}
+        action={"Updated"}
       />
     </>
   );

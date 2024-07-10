@@ -67,6 +67,7 @@ export default function EditAuthor({
         console.log("Author updated successfully:", newAuthor);
         handleClose();
         setShowAlert(true);
+        setAuthor({});
       } catch (error) {
         console.error("Failed to update author:", error);
       }
