@@ -334,3 +334,38 @@ a:focus {
 .view-book {
   margin-bottom: 10px;
 }
+
+.dropdown-toggle {
+  background-color: #daa556;
+  border-color: #daa556;
+  color: black;
+}
+
+.price-container {
+  display: flex;
+  align-items: center;
+}
+
+.arrow-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 7px; /* Adjust the space between Price text and arrows */
+}
+
+.arrow-up,
+.arrow-down {
+  display: block;
+  margin: 0; /* Remove any margin */
+  padding: 0; /* Remove any padding */
+  line-height: 0; /* Adjust line-height to bring arrows closer */
+}
+.form-switch .form-check-input:checked {
+  background-color: #daa556;
+  border-color: #daa556;
+}
+.form-switch .form-check-input {
+  border-color: #daa556;
+}
+.form-switch .form-check-input:focus {
+  border: 0;
+}
