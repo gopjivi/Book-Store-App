@@ -1,7 +1,33 @@
 import { Button } from "react-bootstrap";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import { useEffect, useState } from "react";
 
 export default function ViewBook({ show, handleClose, book }) {
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (book && book.image_URL) {
+        try {
+          const response = await fetch(
+            `http://localhost:3001/uploads/${book.image_URL}`
+          );
+          const blob = await response.blob();
+          const reader = new FileReader();
+
+          reader.onloadend = () => {
+            setPreview(reader.result);
+          };
+
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.error("Error fetching image:", error);
+        }
+      }
+    };
+
+    fetchImage();
+  }, [book]);
   return (
     <>
       <Offcanvas
@@ -79,7 +105,15 @@ export default function ViewBook({ show, handleClose, book }) {
               </div>
               <div className="col"></div>
             </div>
-
+            <div className="row view-book">
+              <div className="col">Book Cover:</div>
+              <div className="col">
+                {preview && (
+                  <img src={preview} alt="Preview" className="img-thumbnail" />
+                )}
+              </div>
+              <div className="col"></div>
+            </div>
             <Button
               variant="custom-orange btnorange"
               type="button"

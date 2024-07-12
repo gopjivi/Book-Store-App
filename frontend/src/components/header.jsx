@@ -12,7 +12,7 @@ function Header() {
           <Container>
             <Navbar.Brand href="#home">
               <img width="100" src="/images/logo.png" alt="Logo" />
-              <span className="store_name">NOVAL NOOK</span>
+              <span className="store_name">NOVEL NOOK</span>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">

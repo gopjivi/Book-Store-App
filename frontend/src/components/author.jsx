@@ -44,6 +44,8 @@ export default function Author() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true); // Loading state
+  const [searchByAuthorName, setsearchByAuthorName] = useState("");
+  const [authorsCopy, setAuthorsCopy] = useState([]);
 
   const authorsApiUrl = "http://localhost:3001/authors";
   const [authorsData] = useFetch(authorsApiUrl);
@@ -52,6 +54,7 @@ export default function Author() {
     if (authorsData) {
       setAuthors(authorsData);
       setLoading(false);
+      setAuthorsCopy(authorsData);
     }
   }, [authorsData]);
 
@@ -110,148 +113,171 @@ export default function Author() {
     dispatch({ type: "HIDE_DELETE_AUTHOR" });
     refetchAuthors();
   }
+  function handleSearchByName(e) {
+    setsearchByAuthorName(e.target.value);
+    let [filteredAuthors] = [authors];
+    let input = e.target.value;
+    console.log(filteredAuthors);
+    if (input.length > 0) {
+      filteredAuthors = filteredAuthors.filter((author) =>
+        author.name.toLowerCase().includes(input.toLowerCase())
+      );
+      setAuthors(filteredAuthors);
+    } else {
+      setAuthors(authorsCopy);
+    }
+  }
 
   return (
-    <div>
-      <div className="container mt-5">
-        <div className="row mb-3">
-          <div className="col-11 text-end">
-            <Button
-              variant="custom-orange"
-              className="btn btnorange"
-              onClick={handleShowAddAuthor}
-            >
-              <i className="bi bi-plus-lg"></i> Add New Author
-            </Button>
+    <div className="container mt-5">
+      <div className="row">
+        <div className="col-md-1 col-sm-0"></div>
+        <div className="col-md-6 col-sm-12 mb-3">
+          <div className="input-group">
+            <span className="input-group-text" id="basic-addon1">
+              <i className="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by Author Name"
+              value={searchByAuthorName}
+              onChange={(e) => handleSearchByName(e)}
+            />
           </div>
         </div>
-        <div className="row">
-          <div className="col-1"></div>
-          <div className="col-10">
-            {loading ? (
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ height: "50vh" }}
+        <div className="col-md-4 col-sm-12 mb-3 text-end">
+          <Button
+            variant="custom-orange"
+            className="btn btnorange"
+            onClick={handleShowAddAuthor}
+          >
+            <i className="bi bi-plus-lg"></i> Add New Author
+          </Button>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-1 col-sm-0"></div>
+        <div className="col-md-10 col-sm-12">
+          {loading ? (
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ height: "50vh" }}
+            >
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : (
+            <>
+              <Table
+                striped
+                bordered
+                hover
+                responsive
+                className="shadow table-striped"
               >
-                <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </div>
-            ) : (
-              <>
-                <Table
-                  striped
-                  bordered
-                  responsive="true"
-                  hover
-                  className="shadow table-striped"
-                >
-                  <thead>
-                    <tr className="table-header">
-                      <th style={{ backgroundColor: "#daa556" }}>
-                        Author Name
-                      </th>
-                      <th style={{ backgroundColor: "#daa556" }}>
-                        Display Name
-                      </th>
-                      <th style={{ backgroundColor: "#daa556" }}> Biography</th>
-                      <th style={{ backgroundColor: "#daa556" }}> Edit</th>
-                      <th style={{ backgroundColor: "#daa556" }}> Delete</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedData.length > 0 ? (
-                      paginatedData.map((author) => (
-                        <tr key={author.author_id}>
-                          <td>{author.name}</td>
-                          <td>{author.display_name}</td>
-                          <td>{author.biography}</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="btn btnorange"
-                              onClick={() =>
-                                handelShowEditAuthor(author.author_id)
-                              }
-                            >
-                              <i className="bi bi-pen-fill"></i>
-                            </button>
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="btn btnorange"
-                              onClick={() =>
-                                handelShowDeleteAuthor(author.author_id)
-                              }
-                            >
-                              <i className="bi bi-trash-fill"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="7">
-                          <div
-                            id="noresult"
-                            className="text-center bg-light text-danger"
+                <thead>
+                  <tr className="table-header">
+                    <th style={{ backgroundColor: "#daa556" }}>Author Name</th>
+                    <th style={{ backgroundColor: "#daa556" }}>Display Name</th>
+                    <th style={{ backgroundColor: "#daa556" }}>Biography</th>
+                    <th style={{ backgroundColor: "#daa556" }}>Edit</th>
+                    <th style={{ backgroundColor: "#daa556" }}>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedData.length > 0 ? (
+                    paginatedData.map((author) => (
+                      <tr key={author.author_id}>
+                        <td>{author.name}</td>
+                        <td>{author.display_name}</td>
+                        <td>{author.biography}</td>
+                        <td>
+                          <button
+                            type="button"
+                            className="btn btnorange"
+                            onClick={() =>
+                              handelShowEditAuthor(author.author_id)
+                            }
                           >
-                            No Results Found !!!
-                          </div>
+                            <i className="bi bi-pen-fill"></i>
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            className="btn btnorange"
+                            onClick={() =>
+                              handelShowDeleteAuthor(author.author_id)
+                            }
+                          >
+                            <i className="bi bi-trash-fill"></i>
+                          </button>
                         </td>
                       </tr>
-                    )}
-                  </tbody>
-                </Table>
-                <div className="d-flex justify-content-between align-items-center">
-                  <span>
-                    Showing {startIndex + 1} to {endIndex} of {totalItems}{" "}
-                    results
-                  </span>
-                  <Pagination responsive="true" className="custom-pagination">
-                    <Pagination.First
-                      onClick={() => handlePageChange(1)}
-                      disabled={currentPage === 1}
-                    />
-                    <Pagination.Prev
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    />
-                    {Array.from({ length: totalPages }, (_, idx) => (
-                      <Pagination.Item
-                        key={idx + 1}
-                        active={idx + 1 === currentPage}
-                        onClick={() => handlePageChange(idx + 1)}
-                      >
-                        {idx + 1}
-                      </Pagination.Item>
-                    ))}
-                    <Pagination.Next
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    />
-                    <Pagination.Last
-                      onClick={() => handlePageChange(totalPages)}
-                      disabled={currentPage === totalPages}
-                    />
-                  </Pagination>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="col-1"></div>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5">
+                        <div
+                          id="noresult"
+                          className="text-center bg-light text-danger"
+                        >
+                          No Results Found !!!
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+              <div className="d-flex justify-content-between align-items-center">
+                <span>
+                  Showing {startIndex + 1} to {endIndex} of {totalItems} results
+                </span>
+                <Pagination className="custom-pagination">
+                  <Pagination.First
+                    onClick={() => handlePageChange(1)}
+                    disabled={currentPage === 1}
+                  />
+                  <Pagination.Prev
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  />
+                  {Array.from({ length: totalPages }, (_, idx) => (
+                    <Pagination.Item
+                      key={idx + 1}
+                      active={idx + 1 === currentPage}
+                      onClick={() => handlePageChange(idx + 1)}
+                    >
+                      {idx + 1}
+                    </Pagination.Item>
+                  ))}
+                  <Pagination.Next
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  />
+                  <Pagination.Last
+                    onClick={() => handlePageChange(totalPages)}
+                    disabled={currentPage === totalPages}
+                  />
+                </Pagination>
+              </div>
+            </>
+          )}
         </div>
-
-        <NewAuthor
-          show={showAddAuthor}
-          handleClose={handleCloseAddAuthor}
-          errors={errors}
-          setErrors={(errors) =>
-            dispatch({ type: "SET_ERRORS", payload: errors })
-          }
-        />
+        <div className="col-md-1 col-sm-0"></div>
       </div>
+
+      <NewAuthor
+        show={showAddAuthor}
+        handleClose={handleCloseAddAuthor}
+        errors={errors}
+        setErrors={(errors) =>
+          dispatch({ type: "SET_ERRORS", payload: errors })
+        }
+      />
 
       <EditAuthor
         show={showEditAuthor}
@@ -263,6 +289,7 @@ export default function Author() {
           dispatch({ type: "SET_ERRORS", payload: errors })
         }
       />
+
       <DeleteAuthor
         show={showDeleteAuthor}
         handleClose={handleCloseDeleteAuthor}

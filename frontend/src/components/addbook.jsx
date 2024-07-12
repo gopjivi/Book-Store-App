@@ -31,6 +31,9 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
 
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+
   const booksApiUrl = "http://localhost:3001/books";
   const authorsApiUrl = "http://localhost:3001/authors";
   const genresApiUrl = "http://localhost:3001/genres";
@@ -145,21 +148,64 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
     const validationErrors = await validateBook();
     book.is_offer_available = offerAvailable;
     console.log(validationErrors);
+    const formData = new FormData();
+    formData.append("file", file);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
       try {
         setErrors({});
         console.log(book);
+        book.image_URL = "default_cover.jpg";
+        if (file) {
+          try {
+            const response = await fetch("http://localhost:3001/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              console.log(data);
+              book.image_URL = data.filename;
+            } else {
+              const errorData = await response.json();
+              console.log(errorData);
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        }
         const newBook = await createNewData(booksApiUrl, book);
         setShowAlert(true);
         setBook({});
         handleClose();
+        setPreview(null);
+        setFile(null);
       } catch (error) {
         console.error("Failed to create book:", error);
       }
     }
   }
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    // Check if a file was selected
+    if (!file) {
+      setFile(null);
+      setPreview(null);
+      return;
+    }
+
+    setFile(file);
+
+    const reader = new FileReader();
+    const url = URL.createObjectURL(file);
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <>
@@ -305,12 +351,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
             <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridEdition">
                 <Form.Label>Edition:</Form.Label>
-                {/* <Form.Control
-                  type="text"
-                  onChange={(e) =>
-                    setBook({ ...book, edition: e.target.value })
-                  }
-                /> */}
+
                 <Form.Select
                   onChange={(e) =>
                     setBook({ ...book, edition: e.target.value })
@@ -373,7 +414,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                 </Form.Control.Feedback>
               </Form.Group>
             </Row>
-            <Row className="mb-4">
+            <Row className="mb-4" rowSpan="2">
               <Form.Group as={Col}>
                 <Form.Label style={{ marginRight: "5px" }}>
                   <span className="required">*</span>Offer Available:
@@ -400,7 +441,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
               </Form.Group>
               <Form.Group as={Col} rowSpan="2"></Form.Group>
             </Row>
-            {/* <Row className="mb-3">
+            <Row className="mb-3">
               <Form.Group as={Col} controlId="formFile">
                 <Form.Label>Upload Book Cover</Form.Label>
                 <Form.Control type="file" onChange={handleFileChange} />
@@ -410,7 +451,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                   <img src={preview} alt="Preview" className="img-thumbnail" />
                 )}
               </Form.Group>
-            </Row> */}
+            </Row>
             <Button
               variant="custom-orange btnorange"
               type="submit"

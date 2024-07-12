@@ -1,6 +1,7 @@
 import AddBook from "./addbook";
 import Button from "react-bootstrap/Button";
 import { Table, Pagination, Form } from "react-bootstrap";
+import { Card, Row, Col, Container } from "react-bootstrap";
 import Spinner from "react-bootstrap/Spinner";
 import { useState, useEffect, useReducer } from "react";
 import { useFetch } from "../services/useFetch";
@@ -115,6 +116,7 @@ export default function Book() {
   function refetchBooks() {
     getAllData(booksApiUrl)
       .then((data) => {
+        console.log("updated data", data);
         setBooks(data);
         setLoading(false); // Set loading to false once data is fetched
       })
@@ -400,7 +402,7 @@ export default function Book() {
             </div>
           </div>
           <div className="col-lg-10 col-md-9 col-sm-8 col-12">
-            <div className="row mb-3">
+            <div className="row">
               <div className="col-md-6 col-sm-12">
                 <div className="input-group">
                   <span className="input-group-text" id="basic-addon1">
@@ -438,100 +440,108 @@ export default function Book() {
                   </div>
                 ) : (
                   <>
-                    <Table
-                      striped
-                      bordered
-                      responsive
-                      hover
-                      className="shadow table-striped"
-                    >
-                      <thead>
-                        <tr className="table-header">
-                          <th style={{ backgroundColor: "#daa556" }}>
-                            Book Title
-                          </th>
-                          <th style={{ backgroundColor: "#daa556" }}>
-                            <div className="price-container">
-                              Price
-                              <div className="arrow-container">
-                                <i
-                                  className="bi bi-caret-up-fill arrow-up"
-                                  onClick={sortByPriceASC}
-                                ></i>
-                                <i
-                                  className="bi bi-caret-down-fill arrow-down"
-                                  onClick={sortByPriceDESC}
-                                ></i>
-                              </div>
-                            </div>
-                          </th>
-                          <th style={{ backgroundColor: "#daa556" }}>
-                            Publication Date
-                          </th>
-                          <th style={{ backgroundColor: "#daa556" }}> View</th>
-                          <th style={{ backgroundColor: "#daa556" }}> Edit</th>
-                          <th style={{ backgroundColor: "#daa556" }}>
-                            {" "}
-                            Delete
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {paginatedData.length > 0 ? (
-                          paginatedData.map((book) => (
-                            <tr key={book.book_id}>
-                              <td>{book.title}</td>
-                              <td>{book.price}</td>
-                              <td>{book.publication_date}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="btn btnorange"
-                                  onClick={() =>
-                                    handelShowViewBook(book.book_id)
-                                  }
-                                >
-                                  <i className="bi bi-binoculars-fill"></i>
-                                </button>
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="btn btnorange"
-                                  onClick={() =>
-                                    handelShowEditBook(book.book_id)
-                                  }
-                                >
-                                  <i className="bi bi-pen-fill"></i>
-                                </button>
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="btn btnorange"
-                                  onClick={() =>
-                                    handelShowDeleteBook(book.book_id)
-                                  }
-                                >
-                                  <i className="bi bi-trash-fill"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="7">
-                              <div
-                                id="noresult"
-                                className="text-center bg-light text-danger"
-                              >
-                                No Results Found !!!
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </Table>
+                    <div className="shadow card-container mt-4">
+                      {paginatedData.length > 0 ? (
+                        paginatedData.map((book, index) => (
+                          <Container
+                            className={`my-4 horizontal-card-container${
+                              index % 2 === 0 ? "card-even" : "card-odd"
+                            }`}
+                            key={book.book_id}
+                          >
+                            <Card
+                              className={`horizontal-card ${
+                                index % 2 === 0 ? "card-even" : "card-odd"
+                              }`}
+                            >
+                              <Row className="g-0">
+                                <Col xs={12} md={2} className="image-container">
+                                  <Card.Img
+                                    key={book.image_URL}
+                                    variant="left"
+                                    src={`http://localhost:3001/uploads/${
+                                      book.image_URL
+                                    }?t=${new Date().getTime()}`}
+                                    className="card-image"
+                                  />
+                                </Col>
+                                <Col xs={12} md={10}>
+                                  <Card.Header
+                                    className="card-header"
+                                    style={{ backgroundColor: "#daa556" }}
+                                  >
+                                    <div className="d-flex justify-content-between bold-title">
+                                      <span>{book.title}</span>
+                                      <span>₹ {book.price}</span>
+                                    </div>
+                                  </Card.Header>
+                                  <Card.Body>
+                                    <Card.Text>
+                                      <div className="mb-2">
+                                        Author:{" "}
+                                        {book.Author
+                                          ? book.Author.name
+                                          : "Unknown"}
+                                      </div>
+                                      <div className="mb-2">
+                                        Available Quantity:{" "}
+                                        {book.stock_quantity}
+                                      </div>
+                                      <div className="mb-2">
+                                        Location: {book.storage_section} -{" "}
+                                        {book.storage_shelf}
+                                      </div>
+                                    </Card.Text>{" "}
+                                    {/* Example text or description */}
+                                  </Card.Body>
+                                  <Card.Footer
+                                    className={`d-flex justify-content-end ${
+                                      index % 2 === 0 ? "card-even" : "card-odd"
+                                    }`}
+                                  >
+                                    <button
+                                      type="button"
+                                      className="btn btnorange mx-2"
+                                      onClick={() =>
+                                        handelShowViewBook(book.book_id)
+                                      }
+                                    >
+                                      <i className="bi bi-binoculars-fill"></i>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn btnorange mx-2"
+                                      onClick={() =>
+                                        handelShowEditBook(book.book_id)
+                                      }
+                                    >
+                                      <i className="bi bi-pen-fill"></i>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn btnorange mx-2"
+                                      onClick={() =>
+                                        handelShowDeleteBook(book.book_id)
+                                      }
+                                    >
+                                      <i className="bi bi-trash-fill"></i>
+                                    </button>
+                                  </Card.Footer>
+                                </Col>
+                              </Row>
+                            </Card>
+                          </Container>
+                        ))
+                      ) : (
+                        <div
+                          id="noresult"
+                          className="text-center bg-light text-danger"
+                        >
+                          No Results Found !!!
+                        </div>
+                      )}
+                    </div>
+
                     <div className="d-flex justify-content-between align-items-center">
                       <span>
                         Showing {startIndex + 1} to {endIndex} of {totalItems}{" "}

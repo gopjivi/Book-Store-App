@@ -25,6 +25,9 @@ export default function EditBook({
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
 
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+
   const booksApiUrl = "http://localhost:3001/books";
   const authorsApiUrl = "http://localhost:3001/authors";
   const genresApiUrl = "http://localhost:3001/genres";
@@ -62,11 +65,29 @@ export default function EditBook({
     setMaxDate(formattedDate);
   }, [authorsData, genresData, languageData]);
 
-  // useEffect(() => {
-  //   setBook(book);
-  //   setOfferAvailable(book.is_offer_available);
-  //   setErrors({});
-  // }, [book]);
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (book && book.image_URL) {
+        try {
+          const response = await fetch(
+            `http://localhost:3001/uploads/${book.image_URL}`
+          );
+          const blob = await response.blob();
+          const reader = new FileReader();
+
+          reader.onloadend = () => {
+            setPreview(reader.result);
+          };
+
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.error("Error fetching image:", error);
+        }
+      }
+    };
+
+    fetchImage();
+  }, [book]);
 
   const handleRadioChange = (value) => {
     setOfferAvailable(value);
@@ -143,27 +164,89 @@ export default function EditBook({
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    // Validate the book data
     const validationErrors = await validateBook();
     book.is_offer_available = offerAvailable;
-    console.log(validationErrors);
+
+    // If there are validation errors, set the errors and return early
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-    } else {
-      try {
-        setErrors({});
-        console.log(book);
+      return;
+    }
 
-        const newBook = await updateData(booksApiUrl, book.book_id, book);
-        setShowAlert(true);
-        setBook({});
-        handleClose();
-        console.log(newBook);
-        console.log("updated successfully:", newBook);
-      } catch (error) {
-        console.error("Failed to Update book:", error);
+    // Reset any previous errors
+    setErrors({});
+
+    // Prepare the form data for file upload
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      let response;
+      if (file) {
+        // Determine the correct upload URL and method based on whether the image is default or existing
+        const uploadUrl =
+          book.image_URL === "default_cover.jpg"
+            ? "http://localhost:3001/upload"
+            : `http://localhost:3001/upload/${book.image_URL}`;
+        const uploadMethod =
+          book.image_URL === "default_cover.jpg" ? "POST" : "PUT";
+
+        // Upload the file
+        response = await fetch(uploadUrl, {
+          method: uploadMethod,
+          body: formData,
+        });
+
+        // Check if the upload was successful
+        if (response.ok) {
+          const data = await response.json();
+          // Update book.image_URL with the new filename
+          book.image_URL = data.filename;
+        } else {
+          const errorData = await response.json();
+          console.error("Error uploading file:", errorData);
+          return;
+        }
       }
+
+      // Update the book information
+      const newBook = await updateData(booksApiUrl, book.book_id, book);
+
+      // Set success state and reset form fields
+      setShowAlert(true);
+      setBook({});
+      setFile(null);
+      setPreview(null);
+      handleClose();
+
+      console.log("Book updated successfully:", newBook);
+    } catch (error) {
+      console.error("Failed to update book:", error);
     }
   }
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    // Check if a file was selected
+    if (!file) {
+      setFile(null);
+      setPreview(null);
+      return;
+    }
+
+    setFile(file);
+
+    const reader = new FileReader();
+    const url = URL.createObjectURL(file);
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <>
       <Offcanvas
@@ -174,7 +257,7 @@ export default function EditBook({
         className="custom-offcanvas"
       >
         <Offcanvas.Header closeButton className="divheader">
-          <Offcanvas.Title>Create New Book</Offcanvas.Title>
+          <Offcanvas.Title>Edit Book Details</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <Form>
@@ -248,9 +331,6 @@ export default function EditBook({
                   <span className="required">*</span> Genre:
                 </Form.Label>
                 <Form.Select
-                  // onChange={(e) =>
-                  //   setBook({ ...book, genre_id: e.target.value })
-                  // }
                   onChange={handleGenreChange}
                   isInvalid={!!errors.genre_id}
                   value={book.genre_id}
@@ -313,12 +393,7 @@ export default function EditBook({
             <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridEdition">
                 <Form.Label>Edition:</Form.Label>
-                {/* <Form.Control
-                      type="text"
-                      onChange={(e) =>
-                        setBook({ ...book, edition: e.target.value })
-                      }
-                    /> */}
+
                 <Form.Select
                   onChange={(e) =>
                     setBook({ ...book, edition: e.target.value })
@@ -384,7 +459,7 @@ export default function EditBook({
                 </Form.Control.Feedback>
               </Form.Group>
             </Row>
-            <Row className="mb-4">
+            <Row className="mb-4" rowSpan="2">
               <Form.Group as={Col}>
                 <Form.Label style={{ marginRight: "5px" }}>
                   <span className="required">*</span>Offer Available:
@@ -411,17 +486,17 @@ export default function EditBook({
               </Form.Group>
               <Form.Group as={Col} rowSpan="2"></Form.Group>
             </Row>
-            {/* <Row className="mb-3">
-                  <Form.Group as={Col} controlId="formFile">
-                    <Form.Label>Upload Book Cover</Form.Label>
-                    <Form.Control type="file" onChange={handleFileChange} />
-                  </Form.Group>
-                  <Form.Group as={Col} controlId="formFileimage">
-                    {preview && (
-                      <img src={preview} alt="Preview" className="img-thumbnail" />
-                    )}
-                  </Form.Group>
-                </Row> */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="formFile">
+                <Form.Label>Update Book Cover:</Form.Label>
+                <Form.Control type="file" onChange={handleFileChange} />
+              </Form.Group>
+              <Form.Group as={Col} controlId="formFileimage">
+                {preview && (
+                  <img src={preview} alt="Preview" className="img-thumbnail" />
+                )}
+              </Form.Group>
+            </Row>
             <Button
               variant="custom-orange btnorange"
               type="submit"
