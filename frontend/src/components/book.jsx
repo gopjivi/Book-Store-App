@@ -120,6 +120,7 @@ export default function Book() {
       .then((data) => {
         console.log("updated data", data);
         setBooks(data);
+        setBooksCopy(data);
         setLoading(false); // Set loading to false once data is fetched
       })
       .catch((error) => console.error("Error fetching books:", error));
@@ -137,7 +138,7 @@ export default function Book() {
   function handleCloseEditBook() {
     dispatch({ type: "HIDE_EDIT_BOOK" });
     refetchBooks();
-    FilterBooks(languageValue, genreValue, authorValue);
+    //FilterBooks(languageValue, genreValue, authorValue);
   }
 
   function handelShowViewBook(id) {
@@ -151,7 +152,7 @@ export default function Book() {
 
   function handleCloseViewBook() {
     dispatch({ type: "HIDE_VIEW_BOOK" });
-    //refetchBooks();
+    refetchBooks();
     //FilterBooks(languageValue, genreValue, authorValue);
   }
   function handelShowDeleteBook(id) {
@@ -308,6 +309,9 @@ export default function Book() {
     } else {
       setBooks(booksCopy);
     }
+    setLanguageValue("");
+    setGenreValue("");
+    setAuthorValue("");
     setCurrentPage(1);
   }
 
@@ -529,7 +533,9 @@ export default function Book() {
                                       </div>
                                       <div className="mb-2">
                                         Location: {book.storage_section} -{" "}
-                                        {book.storage_shelf}
+                                        {book.storage_shelf
+                                          ? book.storage_shelf
+                                          : "N/A"}
                                       </div>
                                     </Card.Text>{" "}
                                     {/* Example text or description */}

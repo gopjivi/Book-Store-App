@@ -95,7 +95,10 @@ export default function ViewBook({ show, handleClose, book }) {
             </div>
             <div className="row view-book">
               <div className="col">Storage Shelf:</div>
-              <div className="col">{book.storage_shelf}</div>
+              <div className="col">
+                {" "}
+                {book.storage_shelf ? book.storage_shelf : "N/A"}
+              </div>
               <div className="col"></div>
             </div>
             <div className="row view-book">

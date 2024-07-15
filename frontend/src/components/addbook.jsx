@@ -359,9 +359,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
                 >
                   <option>Choose...</option>
                   {editions.map((edition, index) => (
-                    <option key={index} eventKey={edition}>
-                      {edition}
-                    </option>
+                    <option key={index}>{edition}</option>
                   ))}
                 </Form.Select>
               </Form.Group>
