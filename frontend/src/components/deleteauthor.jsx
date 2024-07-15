@@ -50,7 +50,11 @@ export default function DeleteAuthor({ show, handleClose, author }) {
             <div className="row" style={{ marginBottom: 15 }}>
               <p>
                 Are you sure you want to delete this{" "}
-                <b className="highlight">{author.name} </b> author?
+                <b className="highlight">{author.name} </b> author?<br></br>
+                <b className="highlight">
+                  This action will also delete all books associated with this
+                  author.
+                </b>
               </p>
             </div>
           </div>

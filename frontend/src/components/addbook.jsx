@@ -159,7 +159,7 @@ export default function AddBook({ show, handleClose, errors, setErrors }) {
         book.image_URL = "default_cover.jpg";
         if (file) {
           try {
-            const response = await fetch("http://localhost:3001/upload", {
+            const response = await fetch("http://localhost:3001/uploads", {
               method: "POST",
               body: formData,
             });

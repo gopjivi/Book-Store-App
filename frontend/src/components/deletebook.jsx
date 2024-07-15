@@ -11,6 +11,24 @@ export default function DeleteBook({ show, handleClose, book }) {
   function handleCloseAlert() {
     setShowAlert(false);
   }
+  const deleteImage = async (filename) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/uploads/${filename}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error deleting image:", errorData);
+      } else {
+        console.log("Image deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
 
   async function deleteBook(id) {
     if (!book || !id) {
@@ -19,6 +37,9 @@ export default function DeleteBook({ show, handleClose, book }) {
     }
 
     try {
+      if (book.image_URL !== "default_cover.jpg") {
+        await deleteImage(book.image_URL);
+      }
       const response = await deleteData(booksApiUrl, id);
 
       console.log("response", response);

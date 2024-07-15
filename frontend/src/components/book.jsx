@@ -62,6 +62,8 @@ export default function Book() {
   const [authorValue, setAuthorValue] = useState("");
   const [genreValue, setGenreValue] = useState("");
   const [isOfferAvailable, setIsOfferAvailable] = useState(false);
+  const [sortByPrice, setSortByPrice] = useState("ASC");
+  const [sortByQuantity, setSortByQuantity] = useState("ASC");
 
   const booksApiUrl = "http://localhost:3001/books";
   const [booksData] = useFetch(booksApiUrl);
@@ -135,6 +137,7 @@ export default function Book() {
   function handleCloseEditBook() {
     dispatch({ type: "HIDE_EDIT_BOOK" });
     refetchBooks();
+    FilterBooks(languageValue, genreValue, authorValue);
   }
 
   function handelShowViewBook(id) {
@@ -148,7 +151,8 @@ export default function Book() {
 
   function handleCloseViewBook() {
     dispatch({ type: "HIDE_VIEW_BOOK" });
-    refetchBooks();
+    //refetchBooks();
+    //FilterBooks(languageValue, genreValue, authorValue);
   }
   function handelShowDeleteBook(id) {
     dispatch({ type: "SHOW_DELETE_BOOK" });
@@ -183,45 +187,29 @@ export default function Book() {
     console.log("language", selectedValue);
     setLanguageValue(e.target.value);
 
-    FilterBooks(selectedValue, genreValue, authorValue, isOfferAvailable);
+    FilterBooks(selectedValue, genreValue, authorValue);
   }
   function handleGenreChange(e) {
     const selectedValue = e.target.value;
     console.log("genre", selectedValue);
     setGenreValue(e.target.value);
 
-    FilterBooks(languageValue, selectedValue, authorValue, isOfferAvailable);
+    FilterBooks(languageValue, selectedValue, authorValue);
   }
   function handleAuthorChange(e) {
     const selectedValue = e.target.value;
     console.log("Author", selectedValue);
     setAuthorValue(e.target.value);
 
-    FilterBooks(languageValue, genreValue, selectedValue, isOfferAvailable);
+    FilterBooks(languageValue, genreValue, selectedValue);
   }
 
-  function FilterBooks(
-    languageValue,
-    genreValue,
-    authorValue,
-    isOfferAvailable
-  ) {
-    // If all filter values are empty, reset to the original books array
-    console.log("isOfferAvailable value", isOfferAvailable);
-
+  function FilterBooks(languageValue, genreValue, authorValue) {
     if (languageValue === "" && genreValue === "" && authorValue === "") {
       console.log("books", books);
-      if (isOfferAvailable) {
-        let offerBooks = books.filter(
-          (book) => book.is_offer_available === true
-        );
-        console.log("filteredbooks by author", offerBooks);
-        setBooks(offerBooks);
-        return;
-      } else {
-        setBooks(booksCopy);
-        return;
-      }
+
+      setBooks(booksCopy);
+      return;
     }
 
     let filteredBooks = [...books]; // Assuming books is your original array
@@ -233,7 +221,7 @@ export default function Book() {
 
     // Apply language filter if value is provided
     if (languageValue !== "") {
-      filteredBooks = filteredBooks.filter(
+      filteredBooks = booksCopy.filter(
         (book) => book.language_id === parseInt(languageValue, 10)
       );
       console.log("filteredbooks by language", filteredBooks);
@@ -254,17 +242,9 @@ export default function Book() {
       );
       console.log("filtered books by author", filteredBooks);
     }
-    //setBooks(filteredBooks);
 
-    if (isOfferAvailable) {
-      filteredBooks = filteredBooks.filter(
-        (book) => book.is_offer_available === true
-      );
-      setBooks(filteredBooks);
-      console.log("filtered books by author", filteredBooks);
-    } else {
-      setBooks(filteredBooks);
-    }
+    setBooks(filteredBooks);
+    setCurrentPage(1); // Reset to first page after filtering
   }
 
   function handelClearAll() {
@@ -283,13 +263,54 @@ export default function Book() {
     setBooks(sorted);
   }
 
+  function sortByQuantityASC() {
+    const sorted = [...books].sort(
+      (a, b) => a.stock_quantity - b.stock_quantity
+    );
+    setBooks(sorted);
+  }
+  function sortByQuantityDESC() {
+    const sorted = [...books].sort(
+      (a, b) => b.stock_quantity - a.stock_quantity
+    );
+    setBooks(sorted);
+  }
+  function handleSortByPrice() {
+    if (sortByPrice == "ASC") {
+      sortByPriceASC();
+      setSortByPrice("DESC");
+    } else {
+      sortByPriceDESC();
+      setSortByPrice("ASC");
+    }
+  }
+  // function handleSortByQuantity() {
+  //   if (sortByQuantity == "ASC") {
+  //     sortByQuantityASC();
+  //     setSortByQuantity("DESC");
+  //   } else {
+  //     sortByQuantityDESC();
+  //     setSortByQuantity("ASC");
+  //   }
+  // }
+
   function handleFilterOffer(e) {
     const isChecked = e.target.checked;
     console.log("Switch is", isChecked ? "on" : "off");
     setIsOfferAvailable(isChecked);
 
-    FilterBooks(languageValue, genreValue, authorValue, isChecked);
+    if (isChecked) {
+      let filteredBooks = booksCopy.filter(
+        (book) => book.is_offer_available === true
+      );
+      setBooks(filteredBooks);
+      console.log("filtered books by author", filteredBooks);
+    } else {
+      setBooks(booksCopy);
+    }
+    setCurrentPage(1);
   }
+
   return (
     <div>
       <div className="container mt-5">
@@ -377,6 +398,7 @@ export default function Book() {
                     ))}
                 </Form.Select>
               </div>
+              <div className="horizontal-line"></div>
             </div>
             <div className="row mb-2">
               <div className="col">
@@ -399,7 +421,25 @@ export default function Book() {
                   </div>
                 </div>
               </div>
+              <div className="horizontal-line"></div>
             </div>
+            <div className="row mb-2">
+              <div className="col-6">
+                <h5>Sort By:</h5>
+              </div>
+            </div>
+            <div className="row mb-2">
+              <div className="col-6">
+                <button onClick={handleSortByPrice}>Price</button>
+              </div>
+            </div>
+            {/* <div className="row mb-2">
+              <div className="col-6" onClick={handleSortByPrice}>
+                <button onClick={handleSortByQuantity}>
+                  Available Quantity
+                </button>
+              </div>
+            </div> */}
           </div>
           <div className="col-lg-10 col-md-9 col-sm-8 col-12">
             <div className="row">

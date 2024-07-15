@@ -491,3 +491,9 @@ a:focus {
   margin-bottom: 10px;
   color: #daa556;
 }
+
+.horizontal-line {
+  border-bottom: 1px solid #ccc;
+  margin: 20px 0;
+  min-width: 200px; /* Set your desired minimum width */
+}

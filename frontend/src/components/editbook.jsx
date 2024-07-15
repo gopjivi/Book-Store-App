@@ -188,8 +188,8 @@ export default function EditBook({
         // Determine the correct upload URL and method based on whether the image is default or existing
         const uploadUrl =
           book.image_URL === "default_cover.jpg"
-            ? "http://localhost:3001/upload"
-            : `http://localhost:3001/upload/${book.image_URL}`;
+            ? "http://localhost:3001/uploads"
+            : `http://localhost:3001/uploads/${book.image_URL}`;
         const uploadMethod =
           book.image_URL === "default_cover.jpg" ? "POST" : "PUT";
 
