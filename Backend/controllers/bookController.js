@@ -24,7 +24,7 @@ exports.getAllBooks = async (req, res) => {
       include: [
         {
           model: Author,
-          attributes: ["name"], // Specify the fields you want from the Author model
+          attributes: ["name", "display_name"], // Specify the fields you want from the Author model
         },
         {
           model: Language,

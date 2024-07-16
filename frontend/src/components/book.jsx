@@ -524,7 +524,7 @@ export default function Book() {
                                       <div className="mb-2">
                                         Author:{" "}
                                         {book.Author
-                                          ? book.Author.name
+                                          ? book.Author.display_name
                                           : "Unknown"}
                                       </div>
                                       <div className="mb-2">

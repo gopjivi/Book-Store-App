@@ -15,13 +15,15 @@ export default function Home() {
           >
             <div>
               <h1>
-                WELCOME TO<br></br>
+                WELCOME TO
+                <br />
                 <span>NOVEL NOOK</span>
               </h1>
               <p>
-                Your journey to a world of books starts here.<br></br> Explore
-                available options for handling Genres,<br></br> Authors and
-                Books details and manage your bookstore efficiently .<br></br>
+                Your journey to a world of books starts here.
+                <br /> Explore available options for handling Genres,
+                <br /> Authors and Books details and manage your bookstore
+                efficiently.
               </p>
               <a href="#cardindex" className="main_btn">
                 Explore
@@ -83,10 +85,7 @@ export default function Home() {
             </Col>
             <Col xs={12} md={7}>
               <Card.Header
-                style={{
-                  backgroundColor: "#daa556",
-                  fontSize: "2rem",
-                }}
+                style={{ backgroundColor: "#daa556", fontSize: "2rem" }}
               >
                 GENRES
               </Card.Header>
@@ -95,6 +94,8 @@ export default function Home() {
                   <p style={{ lineHeight: "2" }}>
                     The Genres section is used to manage the available genres
                     for books in the store. Here’s what you can do:
+                  </p>
+                  <div>
                     <ul>
                       <li>
                         Add New Genre: Use the "
@@ -107,12 +108,13 @@ export default function Home() {
                       </li>
                     </ul>
                     Each book is mapped to particular genre.
-                  </p>
+                  </div>
                 </Card.Text>
               </Card.Body>
             </Col>
           </Row>
         </Card>
+
         <Card
           style={{ marginBottom: "30px", marginTop: "30px" }}
           className="shadow"
@@ -127,10 +129,7 @@ export default function Home() {
             </Col>
             <Col xs={12} md={7}>
               <Card.Header
-                style={{
-                  backgroundColor: "#daa556",
-                  fontSize: "2rem",
-                }}
+                style={{ backgroundColor: "#daa556", fontSize: "2rem" }}
               >
                 AUTHORS
               </Card.Header>
@@ -139,10 +138,12 @@ export default function Home() {
                   <p style={{ lineHeight: "2" }}>
                     The Authors section is used to manage author details. Here’s
                     what you can do:
+                  </p>
+                  <div>
                     <ul>
                       <li>
                         Add New Author: Use the "
-                        <i className="bi bi-plus-lg"></i>Add New Author" button
+                        <i className="bi bi-plus-lg"></i> Add New Author" button
                         to add new authors.
                         <ul>
                           <li>Author Name: Enter the name of the author.</li>
@@ -169,13 +170,14 @@ export default function Home() {
                         name.
                       </li>
                     </ul>
-                    Each book is mapped to particular Author.
-                  </p>
+                    Each book is mapped to a particular Author.
+                  </div>
                 </Card.Text>
               </Card.Body>
             </Col>
           </Row>
         </Card>
+
         <Card
           style={{ marginBottom: "30px", marginTop: "30px" }}
           className="shadow"
@@ -190,10 +192,7 @@ export default function Home() {
             </Col>
             <Col xs={12} md={7}>
               <Card.Header
-                style={{
-                  backgroundColor: "#daa556",
-                  fontSize: "2rem",
-                }}
+                style={{ backgroundColor: "#daa556", fontSize: "2rem" }}
               >
                 BOOKS
               </Card.Header>
@@ -202,9 +201,11 @@ export default function Home() {
                   <p style={{ lineHeight: "2" }}>
                     The Books section is used to manage book details. Here’s
                     what you can do:
+                  </p>
+                  <div>
                     <ul>
                       <li>
-                        Add New Book: Use the "<i className="bi bi-plus-lg"></i>
+                        Add New Book: Use the "<i className="bi bi-plus-lg"></i>{" "}
                         Add New Book" button to add new books.
                         <ul>
                           <li>Book Title: Enter the title of the book.</li>
@@ -251,7 +252,7 @@ export default function Home() {
                         filter options to filter book details.
                       </li>
                     </ul>
-                  </p>
+                  </div>
                 </Card.Text>
               </Card.Body>
             </Col>
